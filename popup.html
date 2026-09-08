@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body { font: 13px system-ui, sans-serif; width: 260px; padding: 12px; }
+      h1 { font-size: 13px; margin: 0 0 8px; }
+      p { color: #555; margin: 0 0 8px; }
+      textarea { width: 100%; height: 90px; box-sizing: border-box; font-family: monospace; }
+      button { margin-top: 8px; }
+      #status { color: #1a7f37; margin-left: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>No-Squash Guard</h1>
+    <p>Protected <b>source</b> branches (one per line). Squash is disabled when a PR's head branch is one of these.</p>
+    <textarea id="branches" spellcheck="false"></textarea>
+    <div>
+      <button id="save">Save</button>
+      <span id="status"></span>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
