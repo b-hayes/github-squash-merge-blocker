@@ -31,11 +31,23 @@
     return protectedBranches.map(norm).includes(head);
   };
 
-  const matchesSquash = (el) => /squash/i.test((el.textContent || "").trim());
+  const ownText = (el) =>
+    Array.from(el.childNodes)
+      .filter((n) => n.nodeType === Node.TEXT_NODE)
+      .map((n) => n.textContent)
+      .join(" ")
+      .trim();
+
+  const matchesSquash = (el) => /squash/i.test(ownText(el) || el.getAttribute("aria-label") || "");
 
   const REASON = " — blocked: PR source branch is protected (No-Squash Guard)";
 
+  const MARK = "data-nsg-disabled";
+
   const disableEl = (el) => {
+    if (el.getAttribute(MARK)) return;
+    el.setAttribute(MARK, "1");
+    el.dataset.nsgTitle = el.title || "";
     el.setAttribute("aria-disabled", "true");
     el.style.opacity = "0.45";
     el.style.cursor = "not-allowed";
@@ -45,12 +57,25 @@
     if ("disabled" in el) el.disabled = true;
   };
 
+  const enableEl = (el) => {
+    if (!el.getAttribute(MARK)) return;
+    el.removeAttribute(MARK);
+    el.removeAttribute("aria-disabled");
+    el.style.opacity = "";
+    el.style.cursor = "";
+    el.style.pointerEvents = "";
+    el.title = el.dataset.nsgTitle || "";
+    delete el.dataset.nsgTitle;
+    if ("disabled" in el) el.disabled = false;
+  };
+
   const SEL = 'button, [role="menuitemradio"], [role="menuitem"], [role="option"], summary, a';
 
   const apply = () => {
-    if (!isProtectedHead()) return;
+    const block = isProtectedHead();
     document.querySelectorAll(SEL).forEach((el) => {
-      if (matchesSquash(el)) disableEl(el);
+      if (block && matchesSquash(el)) return disableEl(el);
+      enableEl(el);
     });
   };
 
