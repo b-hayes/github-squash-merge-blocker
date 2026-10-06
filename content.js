@@ -31,14 +31,8 @@
     return protectedBranches.map(norm).includes(head);
   };
 
-  const ownText = (el) =>
-    Array.from(el.childNodes)
-      .filter((n) => n.nodeType === Node.TEXT_NODE)
-      .map((n) => n.textContent)
-      .join(" ")
-      .trim();
-
-  const matchesSquash = (el) => /squash/i.test(ownText(el) || el.getAttribute("aria-label") || "");
+  const matchesSquash = (el) =>
+    /squash/i.test((el.textContent || "") + " " + (el.getAttribute("aria-label") || ""));
 
   const REASON = " — blocked: PR source branch is protected (No-Squash Guard)";
 
